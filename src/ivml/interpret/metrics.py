@@ -16,7 +16,7 @@ On ne *prétend* pas que l'explication est bonne : on la *mesure*.
 """
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 import torch
 import torch.nn.functional as F
@@ -42,7 +42,7 @@ def faithfulness_deletion(
     target = int(model(x).argmax(dim=1)[0])
     base_conf = F.softmax(model(x), dim=1)[0, target].item()
 
-    order = explanation.flatten().argsort(descending=True)            # pixels les + importants d'abord
+    order = explanation.flatten().argsort(descending=True)  # pixels les + importants d'abord
     h, w = explanation.shape[-2:]
     n_pixels = h * w
     confidences = [base_conf]

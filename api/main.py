@@ -14,8 +14,8 @@ import base64
 import io
 import os
 import time
-
 from contextlib import asynccontextmanager
+from typing import Annotated
 
 import numpy as np
 import torch
@@ -87,7 +87,7 @@ def metrics() -> Response:
 
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)) -> JSONResponse:
+async def predict(file: Annotated[UploadFile, File()]) -> JSONResponse:
     REQUESTS.inc()
     start = time.perf_counter()
 
@@ -101,7 +101,9 @@ async def predict(file: UploadFile = File(...)) -> JSONResponse:
     confidence = float(probs[pred])
 
     explanation = by_design_explanation(model, x)
-    stability = explanation_stability(model, x, by_design_explanation, n_samples=4)["stability_score"]
+    stability = explanation_stability(
+        model, x, by_design_explanation, n_samples=4
+    )["stability_score"]
 
     CONFIDENCE.observe(confidence)
     STABILITY.observe(stability)

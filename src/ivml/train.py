@@ -23,7 +23,7 @@ logger = get_logger("ivml.train")
 
 
 def load_config(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -56,7 +56,9 @@ def train(config_path: str) -> None:
 
     mlflow.set_experiment(cfg.get("experiment_name", "interpretable-vision"))
     with mlflow.start_run():
-        mlflow.log_params({**cfg["model"], **cfg["optimizer"], **cfg["train"], "seed": cfg.get("seed", 42)})
+        mlflow.log_params(
+            {**cfg["model"], **cfg["optimizer"], **cfg["train"], "seed": cfg.get("seed", 42)}
+        )
 
         best_acc = 0.0
         for epoch in range(cfg["train"]["epochs"]):

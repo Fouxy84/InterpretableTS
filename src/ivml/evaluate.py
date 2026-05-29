@@ -40,20 +40,24 @@ def main(checkpoint: str, n: int) -> None:
             break
         image = image.to(device)
         exp_design = by_design_explanation(model, image)
-        agg["bydesign_faith"].append(faithfulness_deletion(model, image, exp_design)["deletion_auc"])
+        agg["bydesign_faith"].append(
+            faithfulness_deletion(model, image, exp_design)["deletion_auc"]
+        )
         agg["bydesign_stab"].append(
             explanation_stability(model, image, by_design_explanation)["stability_score"]
         )
         exp_cam = gradcam(image)
         agg["gradcam_faith"].append(faithfulness_deletion(model, image, exp_cam)["deletion_auc"])
-        agg["gradcam_stab"].append(explanation_stability(model, image, gradcam_fn)["stability_score"])
+        agg["gradcam_stab"].append(
+            explanation_stability(model, image, gradcam_fn)["stability_score"]
+        )
 
     gradcam.remove()
     summary = {k: sum(v) / len(v) for k, v in agg.items() if v}
     logger.info("Résumé interprétabilité : %s", summary)
     with mlflow.start_run(run_name="interpretability-eval"):
         mlflow.log_metrics(summary)
-    print("\n=== Interprétabilité (moyenne sur %d images) ===" % n)
+    print(f"\n=== Interprétabilité (moyenne sur {n} images) ===")
     print(f"{'Méthode':<18}{'Fidélité (AUC↓)':<18}{'Stabilité (↑)':<14}")
     print(f"{'By design':<18}{summary['bydesign_faith']:<18.4f}{summary['bydesign_stab']:<14.4f}")
     print(f"{'Grad-CAM':<18}{summary['gradcam_faith']:<18.4f}{summary['gradcam_stab']:<14.4f}")
