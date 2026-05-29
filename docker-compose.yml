@@ -8,7 +8,7 @@ services:
     environment:
       - MODEL_CHECKPOINT=artifacts/best_model.pt
     volumes:
-      - ./artifacts:/app/artifacts
+      - artifacts:/app/artifacts
 
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.12.1
@@ -16,21 +16,25 @@ services:
       - "5000:5000"
     command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db
     volumes:
-      - ./mlruns:/mlflow
+      - mlruns:/mlflow
 
   prometheus:
-    image: prom/prometheus:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prometheus
     ports:
       - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
-    image: grafana/grafana:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.grafana
     ports:
       - "3000:3000"
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-    volumes:
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+
+volumes:
+  artifacts:
+  mlruns:

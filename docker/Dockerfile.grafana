@@ -1,0 +1,2 @@
+FROM grafana/grafana:latest
+COPY monitoring/grafana/dashboards /var/lib/grafana/dashboards
