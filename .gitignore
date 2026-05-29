@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+data/
+artifacts/
+mlruns/
+mlflow.db
+*.pt
+*.pth
+*.onnx
+*.joblib
+*.idx
+*.db
+.env
+.ipynb_checkpoints/
+*.zip

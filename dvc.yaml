@@ -1,0 +1,17 @@
+# Pipeline reproductible. `dvc repro` rejoue prepare → train → evaluate.
+stages:
+  train:
+    cmd: python -m ivml.train --config configs/config.yaml
+    deps:
+      - src/ivml/train.py
+      - src/ivml/model.py
+      - src/ivml/data.py
+      - configs/config.yaml
+    outs:
+      - artifacts/best_model.pt
+  evaluate:
+    cmd: python -m ivml.evaluate --checkpoint artifacts/best_model.pt --n 50
+    deps:
+      - artifacts/best_model.pt
+      - src/ivml/evaluate.py
+      - src/ivml/interpret

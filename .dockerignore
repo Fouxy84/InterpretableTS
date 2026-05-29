@@ -1,0 +1,7 @@
+data/
+mlruns/
+artifacts/
+.git/
+__pycache__/
+*.pt
+.venv/
